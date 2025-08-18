@@ -1,68 +1,51 @@
-🐦 XProfile Preview Tool
 
-The XProfile Preview Tool is a fun web app that lets you design and preview a fake Twitter (X) profile instantly. 🎨
+# XProfile Preview Tool
 
-✨ Features
+The XProfile Preview Tool is a fun web app that lets you create and preview a fake Twitter (X) profile instantly. You can customize profile details, see live updates, and share your mockups with others.
 
-Live profile card preview (updates instantly as you type).
+## Features
 
-Upload or link profile picture & banner image.
+- 🎨 Live Profile Preview – updates instantly as you type.
 
-Verified ✅ / Private 🔒 status toggle.
+- Custom Images – upload or link profile picture & banner.
 
-Auto-formatting for large follower counts (e.g., 1.2K, 3.4M).
+- ✅ Verified / Private Status – toggle badges like the real app.
 
-Switch between Light / Dark mode.
+- 📊 Followers/Following Counts – auto-formatted (e.g., 1.2K, 3.4M).
 
-Pick custom accent color.
+- 🌗 Light / Dark Mode – switch themes anytime.
 
-Tabs like the real X app: Tweets / Replies / Media / Likes.
+- 🎨 Accent Color Picker – choose your profile’s highlight color.
 
-Save & restore profile setups with Export / Import JSON.
+- 🗂 Tabs Navigation – Tweets / Replies / Media / Likes.
 
-Share via URL (state saved in link).
+- 💾 Export & Import – save profile setup as JSON and restore later.
 
-(Coming Soon 🚀) Download profile preview as PNG image.
+- 🔗 Shareable Links – state saved in the URL for easy sharing.
 
-🚀 Tech Stack
+### 🚧 Coming Soon:
 
-HTML5
+- 📸 Download Profile as PNG (work in progress 🚀).
 
-CSS3
+## 🚀 Tech Stack
 
-JavaScript (Vanilla)
+- HTML5
 
-html2canvas (for PNG export – will be added soon ✅)
+- CSS3
 
-📦 Installation & Usage
+- JavaScript (Vanilla)
 
-Clone the repository or download the ZIP:
-
-git clone https://github.com/your-username/xprofile-preview.git
+- html2canvas (for PNG export – will be added soon ✅)
 
 
-Open index.html in your browser.
+## Installation and Usage
 
-Start customizing your profile! 🎉
+1. Clone the repository or download the ZIP:
 
-📸 Screenshots
+```bash
+  git clone https://github.com/your-username/xprofile-preview.git
+```
+2. Open index.html in your browser.
 
-(Add screenshots here after running your project – e.g., profile previews in light & dark mode)
+3. Start customizing your profile! 🎉
 
-🔮 Roadmap
-
- Live preview with custom inputs
-
- Light/Dark mode & accent colors
-
- Profile tabs (Tweets, Replies, Media, Likes)
-
- Download as PNG (Coming Soon 🚀)
-
-🤝 Contributing
-
-Pull requests are welcome! If you’d like to improve the UI, add new features, or fix bugs, feel free to fork and submit changes.
-
-📜 License
-
-This project is licensed under the MIT License.
