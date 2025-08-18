@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>X Profile Preview – Local</title>
+  <!-- Tailwind via CDN (no build tools needed) -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root { --accent: #1d9bf0; }
+    html { font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji"; }
+    /* mimic X verified check */
+    .check-badge { display:inline-flex; align-items:center; justify-content:center; width:18px; height:18px; border-radius:9999px; background:var(--accent); color:white; font-size:12px; }
+    .x-link { color: var(--accent); }
+    .pill { border:1px solid rgb(228 228 231); }
+    .dark .pill { border-color: rgb(63 63 70); }
+    .shadow-soft { box-shadow: 0 10px 30px rgba(0,0,0,0.08); }
+    .banner-skeleton { background: linear-gradient(110deg, rgba(0,0,0,0.08) 8%, rgba(0,0,0,0.20) 18%, rgba(0,0,0,0.08) 33%); background-size: 200% 100%; animation: 1.5s shine linear infinite; }
+    @keyframes shine { to { background-position-x: -200%; } }
+    .hide { display: none; }
+  </style>
+</head>
+<body class="bg-zinc-50 text-zinc-900 dark:bg-zinc-900 dark:text-zinc-100 transition-colors">
+  <div class="max-w-6xl mx-auto p-4 sm:p-6">
+    <header class="flex items-center justify-between gap-3 mb-6">
+      <div class="flex items-center gap-3">
+        <div class="w-9 h-9 rounded-2xl bg-[var(--accent)]/10 flex items-center justify-center"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="w-5 h-5" fill="currentColor"><path d="M23 3.01c-.8.35-1.63.57-2.49.68.9-.53 1.6-1.38 1.93-2.39-.84.5-1.77.86-2.76 1.06A4.17 4.17 0 0 0 16.25.75a4.16 4.16 0 0 0-4.17 4.16c0 .33.04.66.12.98C7.99 5.72 4.68 3.93 2.47 1.18a4.17 4.17 0 0 0-.56 2.09 4.16 4.16 0 0 0 1.85 3.46 4.15 4.15 0 0 1-1.88-.52v.05a4.16 4.16 0 0 0 3.34 4.08c-.45.12-.92.18-1.4.07a4.17 4.17 0 0 0 3.89 2.9A8.36 8.36 0 0 1 0 19.46a11.8 11.8 0 0 0 6.39 1.87c7.67 0 11.86-6.35 11.86-11.86v-.54A8.38 8.38 0 0 0 23 3.01Z"/></svg></div>
+        <div>
+          <h1 class="text-xl sm:text-2xl font-semibold">X Profile Preview</h1>
+          <p class="text-sm text-zinc-500 dark:text-zinc-400">See how your X (Twitter) profile would look — safely, locally.</p>
+        </div>
+      </div>
+      <div class="flex items-center gap-2">
+        <button id="themeBtn" class="pill px-3 py-2 rounded-xl text-sm">🌙 Dark</button>
+        <button id="resetBtn" class="pill px-3 py-2 rounded-xl text-sm">Reset</button>
+        <button id="saveBtn" class="pill px-3 py-2 rounded-xl text-sm">Save</button>
+      </div>
+    </header>
+
+    <div class="grid lg:grid-cols-2 gap-6">
+      <!-- Controls -->
+      <section class="bg-white dark:bg-zinc-800 rounded-2xl p-4 sm:p-6 shadow-soft">
+        <h2 class="text-lg font-semibold mb-4">Profile Controls</h2>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <label class="block">
+            <span class="text-sm text-zinc-500">Display Name</span>
+            <input id="name" class="w-full mt-1 px-3 py-2 rounded-xl bg-zinc-100 dark:bg-zinc-700 outline-none focus:ring-2 focus:ring-[var(--accent)]" placeholder="Elon Musk" />
+          </label>
+          <label class="block">
+            <span class="text-sm text-zinc-500">Username</span>
+            <div class="mt-1 flex items-center gap-2">
+              <span class="px-3 py-2 rounded-xl bg-zinc-100 dark:bg-zinc-700">@</span>
+              <input id="username" class="w-full px-3 py-2 rounded-xl bg-zinc-100 dark:bg-zinc-700 outline-none focus:ring-2 focus:ring-[var(--accent)]" placeholder="elonmusk" />
+            </div>
+          </label>
+          <label class="block sm:col-span-2">
+            <span class="text-sm text-zinc-500">Bio <span id="bioCount" class="ml-1 text-xs">0/160</span></span>
+            <textarea id="bio" maxlength="160" class="w-full mt-1 px-3 py-2 rounded-xl bg-zinc-100 dark:bg-zinc-700 outline-none focus:ring-2 focus:ring-[var(--accent)]" rows="3" placeholder="Building rockets, cars and memes." ></textarea>
+          </label>
+
+          <label class="block">
+            <span class="text-sm text-zinc-500">Location</span>
+            <input id="location" class="w-full mt-1 px-3 py-2 rounded-xl bg-zinc-100 dark:bg-zinc-700 outline-none focus:ring-2 focus:ring-[var(--accent)]" placeholder="Mars" />
+          </label>
+          <label class="block">
+            <span class="text-sm text-zinc-500">Website</span>
+            <input id="website" class="w-full mt-1 px-3 py-2 rounded-xl bg-zinc-100 dark:bg-zinc-700 outline-none focus:ring-2 focus:ring-[var(--accent)]" placeholder="https://x.com" />
+          </label>
+
+          <label class="block">
+            <span class="text-sm text-zinc-500">Joined</span>
+            <input id="joined" class="w-full mt-1 px-3 py-2 rounded-xl bg-zinc-100 dark:bg-zinc-700 outline-none focus:ring-2 focus:ring-[var(--accent)]" placeholder="November 2009" />
+          </label>
+          <div class="grid grid-cols-2 gap-3">
+            <label class="block">
+              <span class="text-sm text-zinc-500">Following</span>
+              <input id="following" type="number" class="w-full mt-1 px-3 py-2 rounded-xl bg-zinc-100 dark:bg-zinc-700 outline-none focus:ring-2 focus:ring-[var(--accent)]" placeholder="500" />
+            </label>
+            <label class="block">
+              <span class="text-sm text-zinc-500">Followers</span>
+              <input id="followers" type="number" class="w-full mt-1 px-3 py-2 rounded-xl bg-zinc-100 dark:bg-zinc-700 outline-none focus:ring-2 focus:ring-[var(--accent)]" placeholder="1,000,000" />
+            </label>
+          </div>
+
+          <label class="flex items-center gap-2 mt-2">
+            <input id="verified" type="checkbox" class="w-4 h-4" />
+            <span class="text-sm">Show Verified Badge</span>
+          </label>
+          <label class="flex items-center gap-2">
+            <input id="private" type="checkbox" class="w-4 h-4" />
+            <span class="text-sm">Private (lock icon)</span>
+          </label>
+
+          <div class="sm:col-span-2 grid grid-cols-1 sm:grid-cols-2 gap-4 mt-2">
+            <div class="p-3 rounded-xl border border-zinc-200 dark:border-zinc-700">
+              <div class="text-sm text-zinc-500 mb-2">Avatar</div>
+              <div class="flex items-center gap-3">
+                <input id="avatarFile" type="file" accept="image/*" class="block w-full text-sm file:mr-3 file:py-2 file:px-3 file:rounded-lg file:border-0 file:bg-zinc-900 file:text-white dark:file:bg-white dark:file:text-zinc-900" />
+                <input id="avatarUrl" placeholder="or paste image URL" class="w-full px-3 py-2 rounded-xl bg-zinc-100 dark:bg-zinc-700" />
+              </div>
+            </div>
+            <div class="p-3 rounded-xl border border-zinc-200 dark:border-zinc-700">
+              <div class="text-sm text-zinc-500 mb-2">Banner</div>
+              <div class="flex items-center gap-3">
+                <input id="bannerFile" type="file" accept="image/*" class="block w-full text-sm file:mr-3 file:py-2 file:px-3 file:rounded-lg file:border-0 file:bg-zinc-900 file:text-white dark:file:bg-white dark:file:text-zinc-900" />
+                <input id="bannerUrl" placeholder="or paste image URL" class="w-full px-3 py-2 rounded-xl bg-zinc-100 dark:bg-zinc-700" />
+              </div>
+            </div>
+          </div>
+
+          <div class="sm:col-span-2 flex flex-wrap items-center gap-3 mt-2">
+            <label class="flex items-center gap-2">
+              <span class="text-sm">Accent</span>
+              <input id="accent" type="color" value="#1d9bf0" class="w-10 h-8 rounded-md border border-zinc-300 dark:border-zinc-600" />
+            </label>
+            <button id="shareBtn" class="pill px-3 py-2 rounded-xl text-sm">Share URL</button>
+            <button id="exportBtn" class="pill px-3 py-2 rounded-xl text-sm">Export JSON</button>
+            <input id="importInput" type="file" accept="application/json" class="hidden" />
+            <button id="importBtn" class="pill px-3 py-2 rounded-xl text-sm">Import JSON</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Preview -->
+      <section class="bg-white dark:bg-zinc-800 rounded-2xl shadow-soft overflow-hidden">
+        <div id="preview" class="">
+          <div id="banner" class="w-full h-40 sm:h-48 bg-zinc-200 dark:bg-zinc-700 banner-skeleton relative">
+            <img id="bannerImg" class="w-full h-full object-cover hidden" alt="Banner" />
+          </div>
+          <div class="px-4 sm:px-6 pb-6">
+            <div class="flex justify-end mt-2">
+              <button class="px-3 py-1 rounded-full text-sm pill">Edit profile</button>
+            </div>
+            <div class="relative">
+              <div class="absolute -top-16">
+                <div class="relative w-32 h-32 rounded-full ring-4 ring-white dark:ring-zinc-800 overflow-hidden bg-zinc-200 dark:bg-zinc-700">
+                  <img id="avatarImg" class="w-full h-full object-cover hidden" alt="Avatar" />
+                  <div id="avatarSkeleton" class="absolute inset-0 banner-skeleton"></div>
+                </div>
+              </div>
+            </div>
+            <div class="pt-20">
+              <div class="flex items-center flex-wrap gap-2">
+                <h3 id="outName" class="text-xl font-bold">Your Name</h3>
+                <span id="verifiedBadge" class="check-badge hide" title="Verified">✓</span>
+                <svg id="lockIcon" class="w-4 h-4 text-zinc-500 hide" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M12 2a5 5 0 00-5 5v3H6a2 2 0 00-2 2v8a2 2 0 002 2h12a2 2 0 002-2v-8a2 2 0 00-2-2h-1V7a5 5 0 00-5-5zm-3 8V7a3 3 0 116 0v3H9z"/></svg>
+              </div>
+              <div class="text-zinc-500">@<span id="outUsername">username</span></div>
+              <p id="outBio" class="mt-3 whitespace-pre-wrap"></p>
+
+              <div class="flex flex-wrap items-center gap-4 mt-3 text-zinc-500">
+                <div class="flex items-center gap-1"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C8.14 2 5 5.14 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.86-3.14-7-7-7zm0 9.5A2.5 2.5 0 119.5 9 2.5 2.5 0 0112 11.5z"/></svg><span id="outLocation"></span></div>
+                <div class="flex items-center gap-1"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M10.9 2a1 1 0 00-.9 1v1H7a3 3 0 00-3 3v10a3 3 0 003 3h10a3 3 0 003-3V7a3 3 0 00-3-3h-3V3a1 1 0 00-1-1h-2.1zM12 8a4 4 0 110 8 4 4 0 010-8z"/></svg><a id="outWebsite" href="#" target="_blank" class="x-link"></a></div>
+                <div class="flex items-center gap-1"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M7 10a5 5 0 0110 0v2h1a2 2 0 012 2v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5a2 2 0 012-2h1v-2z" /><path d="M9 12v-2a3 3 0 116 0v2H9z"/></svg><span id="outJoined"></span></div>
+              </div>
+
+              <div class="flex items-center gap-4 mt-3">
+                <div><span id="outFollowing" class="font-semibold">0</span> <span class="text-zinc-500">Following</span></div>
+                <div><span id="outFollowers" class="font-semibold">0</span> <span class="text-zinc-500">Followers</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <footer class="text-center text-xs text-zinc-500 mt-8">
+      This is a local preview tool. It does not connect to X or change your real profile.
+    </footer>
+  </div>
+
+  <script>
+    // Helpers
+    const $ = (id) => document.getElementById(id);
+    const setText = (id, v) => $(id).textContent = v || '';
+    const clampBio = () => {
+      const v = $('bio').value;
+      $('bioCount').textContent = `${v.length}/160`;
+    };
+    const toK = (n) => {
+      if (!n && n !== 0) return '';
+      n = Number(n);
+      if (Number.isNaN(n)) return '';
+      if (n >= 1_000_000) return (n/1_000_000).toFixed(n % 1_000_000 === 0 ? 0 : 1) + 'M';
+      if (n >= 1_000) return (n/1_000).toFixed(n % 1_000 === 0 ? 0 : 1) + 'K';
+      return n.toString();
+    };
+    const linkify = (text) => {
+      if (!text) return '';
+      // simple URL -> <a> replacement
+      const urlRegex = /(https?:\/\/[^\s]+)/g;
+      return text.replace(urlRegex, (url) => `<a class="x-link" href="${url}" target="_blank">${url}</a>`);
+    };
+
+    const stateKeys = [
+      'name','username','bio','location','website','joined','following','followers','verified','private','accent','avatarData','bannerData','theme'
+    ];
+
+    function getState() {
+      return {
+        name: $('name').value.trim(),
+        username: $('username').value.trim(),
+        bio: $('bio').value,
+        location: $('location').value.trim(),
+        website: $('website').value.trim(),
+        joined: $('joined').value.trim(),
+        following: $('following').value,
+        followers: $('followers').value,
+        verified: $('verified').checked,
+        private: $('private').checked,
+        accent: $('accent').value,
+        avatarData: $('avatarImg').src && !$('avatarImg').classList.contains('hidden') ? $('avatarImg').src : '',
+        bannerData: $('bannerImg').src && !$('bannerImg').classList.contains('hidden') ? $('bannerImg').src : '',
+        theme: document.documentElement.classList.contains('dark') ? 'dark' : 'light'
+      };
+    }
+
+    function setState(s) {
+      $('name').value = s.name || '';
+      $('username').value = s.username || '';
+      $('bio').value = s.bio || '';
+      $('location').value = s.location || '';
+      $('website').value = s.website || '';
+      $('joined').value = s.joined || '';
+      $('following').value = s.following || '';
+      $('followers').value = s.followers || '';
+      $('verified').checked = !!s.verified;
+      $('private').checked = !!s.private;
+      $('accent').value = s.accent || '#1d9bf0';
+      if (s.avatarData) showImage('avatarImg', s.avatarData, 'avatarSkeleton');
+      if (s.bannerData) showImage('bannerImg', s.bannerData);
+      document.documentElement.classList.toggle('dark', s.theme === 'dark');
+      $('themeBtn').textContent = s.theme === 'dark' ? '☀️ Light' : '🌙 Dark';
+      document.documentElement.style.setProperty('--accent', s.accent || '#1d9bf0');
+      render();
+    }
+
+    function saveLocal() {
+      const s = getState();
+      localStorage.setItem('xpreview', JSON.stringify(s));
+    }
+
+    function loadLocal() {
+      try { const s = JSON.parse(localStorage.getItem('xpreview')||'{}'); setState(s); } catch {}
+    }
+
+    function exportJSON() {
+      const data = new Blob([JSON.stringify(getState(), null, 2)], {type: 'application/json'});
+      const url = URL.createObjectURL(data);
+      const a = document.createElement('a');
+      a.href = url; a.download = 'xprofile-preview.json'; a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    function importJSON(file) {
+      const reader = new FileReader();
+      reader.onload = () => { try { const s = JSON.parse(reader.result); setState(s); saveLocal(); } catch {} };
+      reader.readAsText(file);
+    }
+
+    function shareURL() {
+      const s = getState();
+      const packed = btoa(unescape(encodeURIComponent(JSON.stringify(s))));
+      const url = location.origin + location.pathname + '#s=' + packed;
+      navigator.clipboard.writeText(url).then(() => {
+        alert('Sharable URL copied to clipboard!');
+      }, () => alert(url));
+    }
+
+    function maybeLoadFromHash() {
+      const m = location.hash.match(/#s=([^&]+)/);
+      if (m) {
+        try {
+          const s = JSON.parse(decodeURIComponent(escape(atob(m[1]))));
+          setState(s);
+        } catch {}
+      }
+    }
+
+    function readFile(file, cb) {
+      const reader = new FileReader();
+      reader.onload = () => cb(reader.result);
+      reader.readAsDataURL(file);
+    }
+
+    function showImage(id, src, skeletonId) {
+      const img = $(id);
+      img.src = src; img.classList.remove('hidden');
+      if (skeletonId) $(skeletonId).classList.add('hidden');
+      if (id === 'bannerImg') $('banner').classList.remove('banner-skeleton');
+    }
+
+    function setWebsiteLink(url) {
+      const a = $('outWebsite');
+      if (!url) { a.textContent = ''; a.removeAttribute('href'); return; }
+      let text = url.replace(/^https?:\/\//,'');
+      a.textContent = text; a.href = url.startsWith('http') ? url : 'https://' + url;
+    }
+
+    function render() {
+      const s = getState();
+      document.documentElement.style.setProperty('--accent', s.accent || '#1d9bf0');
+      setText('outName', s.name || 'Your Name');
+      setText('outUsername', s.username || 'username');
+      $('verifiedBadge').classList.toggle('hide', !s.verified);
+      $('lockIcon').classList.toggle('hide', !s.private);
+      $('outBio').innerHTML = linkify(s.bio || '');
+      setText('outLocation', s.location || '');
+      setWebsiteLink(s.website);
+      setText('outJoined', s.joined || '');
+      setText('outFollowing', toK(s.following || 0));
+      setText('outFollowers', toK(s.followers || 0));
+      clampBio();
+    }
+
+    // Event wiring
+    ['name','username','bio','location','website','joined','following','followers','verified','private','accent'].forEach(id => {
+      const el = $(id);
+      el.addEventListener(el.type === 'checkbox' ? 'change' : 'input', () => { render(); saveLocal(); });
+    });
+
+    $('avatarFile').addEventListener('change', (e) => {
+      const f = e.target.files?.[0]; if (f) readFile(f, (src) => { showImage('avatarImg', src, 'avatarSkeleton'); saveLocal(); });
+    });
+    $('bannerFile').addEventListener('change', (e) => {
+      const f = e.target.files?.[0]; if (f) readFile(f, (src) => { showImage('bannerImg', src); saveLocal(); });
+    });
+    $('avatarUrl').addEventListener('change', (e) => { const url = e.target.value.trim(); if (url) { showImage('avatarImg', url, 'avatarSkeleton'); saveLocal(); }});
+    $('bannerUrl').addEventListener('change', (e) => { const url = e.target.value.trim(); if (url) { showImage('bannerImg', url); saveLocal(); }});
+
+    $('themeBtn').addEventListener('click', () => {
+      const dark = !document.documentElement.classList.contains('dark');
+      document.documentElement.classList.toggle('dark', dark);
+      $('themeBtn').textContent = dark ? '☀️ Light' : '🌙 Dark';
+      localStorage.setItem('xpreview-theme', dark ? 'dark' : 'light');
+    });
+
+    $('resetBtn').addEventListener('click', () => {
+      localStorage.removeItem('xpreview');
+      setState({ accent: '#1d9bf0', theme: document.documentElement.classList.contains('dark') ? 'dark' : 'light' });
+    });
+
+    $('saveBtn').addEventListener('click', saveLocal);
+    $('exportBtn').addEventListener('click', exportJSON);
+    $('importBtn').addEventListener('click', () => $('importInput').click());
+    $('importInput').addEventListener('change', (e) => { const f = e.target.files?.[0]; if (f) importJSON(f); });
+    $('shareBtn').addEventListener('click', shareURL);
+
+    // Init
+    (function init(){
+      const theme = localStorage.getItem('xpreview-theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+      document.documentElement.classList.toggle('dark', theme === 'dark');
+      $('themeBtn').textContent = theme === 'dark' ? '☀️ Light' : '🌙 Dark';
+      maybeLoadFromHash();
+      loadLocal();
+      render();
+    })();
+  </script>
+</body>
+</html>
