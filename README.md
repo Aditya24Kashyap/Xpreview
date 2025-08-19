@@ -7,7 +7,7 @@ The XProfile Preview Tool is a fun web app that lets you create and preview a fa
 
 - 🎨 Live Profile Preview – updates instantly as you type.
 
-- Custom Images – upload or link profile picture & banner.
+- 🖼 Custom Images – upload or link profile picture & banner.
 
 - ✅ Verified / Private Status – toggle badges like the real app.
 
